@@ -18,9 +18,11 @@ export class AppController {
 
 		const url = query.url || query.id;
 
-		const video = await this.appService.download(url, makeOptions(query));
+		const videoInfo = await this.appService.lookup(url);
+		const video = this.appService.download(url, makeOptions(query, videoInfo));
 
-		res.setHeader('Content-Disposition', contentDisposition(`${video.info.videoDetails.title}.${query.format}`));
-		video.stream.pipe(res);
+		res.setHeader('Content-Disposition', contentDisposition(`${videoInfo.videoDetails.title}.${query.format}`));
+		res.setHeader('Content-Type', query.format === 'mp3' ? 'audio/mpeg' : 'video/mp4');
+		video.pipe(res);
 	}
 }

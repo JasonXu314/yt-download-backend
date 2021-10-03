@@ -4,10 +4,11 @@ import { downloadOptions } from 'ytdl-core';
 
 @Injectable()
 export class AppService {
-	async download(url: string, options?: downloadOptions): Promise<DownloadResult> {
-		return {
-			info: await ytdl.getInfo(url),
-			stream: ytdl(url, options)
-		};
+	download(url: string, options?: downloadOptions): Readable {
+		return ytdl(url, options);
+	}
+
+	async lookup(url: string): Promise<VideoInfo> {
+		return ytdl.getInfo(url);
 	}
 }
