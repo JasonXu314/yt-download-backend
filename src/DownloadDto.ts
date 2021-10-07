@@ -1,4 +1,5 @@
 import { IsIn, IsOptional, IsUrl, Validate } from 'class-validator';
+import { QUALITY_OPTIONS } from 'utils/utils';
 import { YoutubeIDValidator } from './YoutubeIDValidator';
 
 export class DownloadDto {
@@ -13,7 +14,7 @@ export class DownloadDto {
 	@IsIn(['mp4', 'mp3'])
 	format: DownloadFormat;
 
-	@IsIn(['highest', 'lowest', 'highestaudio', 'lowestaudio', 'highestvideo', 'lowestvideo'])
+	@IsIn(QUALITY_OPTIONS)
 	@IsOptional()
-	quality: DownloadQuality = 'highest';
+	quality: DownloadQuality;
 }

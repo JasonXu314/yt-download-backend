@@ -25,4 +25,15 @@ export class AppController {
 		res.setHeader('Content-Type', query.format === 'mp3' ? 'audio/mpeg' : 'video/mp4');
 		video.pipe(res);
 	}
+
+	@Get('/info')
+	async info(@Query() query: { url?: string; id?: string }): Promise<VideoInfo> {
+		if (!query.url && !query.id) {
+			throw new BadRequestException('Either url or id must be present');
+		}
+
+		const url = query.url || query.id;
+
+		return this.appService.lookup(url);
+	}
 }
