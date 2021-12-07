@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Query, Response, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Post, Query, Response, UsePipes, ValidationPipe } from '@nestjs/common';
 import * as contentDisposition from 'content-disposition';
 import { Response as Res } from 'express';
 import { makeOptions } from 'utils/utils';
@@ -36,4 +36,23 @@ export class AppController {
 
 		return this.appService.lookup(url);
 	}
+
+	@Get('/audio')
+	async downloadAudio(@Query() query: { url?: string; id?: string }, @Response() res: Res): Promise<void> {
+		if (!query.url && !query.id) {
+			throw new BadRequestException('Either url or id must be present');
+		}
+
+		const url = query.url || query.id;
+
+		const videoInfo = await this.appService.lookup(url);
+		const video = this.appService.download(url, { filter: 'audioonly' });
+
+		res.setHeader('Content-Disposition', contentDisposition(`${videoInfo.videoDetails.title}.mp3`));
+		res.setHeader('Content-Type', 'audio/mpeg');
+		video.pipe(res);
+	}
+
+	@Post('/wakeup')
+	wakeup(): void {}
 }

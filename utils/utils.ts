@@ -47,6 +47,8 @@ export function makeOptions(dto: DownloadDto, videoInfo: VideoInfo): downloadOpt
 		return true;
 	});
 
+	console.log(matchingFormats.length);
+
 	options.format = selectFormat(matchingFormats, dto.quality);
 
 	console.log(options.format);
@@ -59,7 +61,11 @@ function selectFormat(formats: videoFormat[], targetQuality: DownloadQuality): v
 	let format: videoFormat;
 
 	while (!(format = formats.find((format) => format.qualityLabel === quality))) {
-		quality = upQuality(quality);
+		try {
+			quality = upQuality(quality);
+		} catch (e) {
+			break;
+		}
 	}
 
 	if (format) {
@@ -68,7 +74,11 @@ function selectFormat(formats: videoFormat[], targetQuality: DownloadQuality): v
 
 	quality = targetQuality;
 	while (!(format = formats.find((format) => format.qualityLabel === quality))) {
-		quality = downQuality(quality);
+		try {
+			quality = downQuality(quality);
+		} catch (e) {
+			break;
+		}
 	}
 
 	if (format) {
